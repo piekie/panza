@@ -19,6 +19,10 @@ class Game
     static SDL_Window* window;
     static SDL_Surface* screenSurface;
 
+    static bool init();
+    static bool loadMedia();
+    static void close();
+
   protected:
     Game() { }
     Game( const Game& );
