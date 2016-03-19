@@ -1,5 +1,8 @@
 #include <SDL.h>
 
+#ifndef GAME_H
+#define GAME_H
+
 class Game;
 
 class GameDestroyer
@@ -17,7 +20,6 @@ class Game
     static Game* instance;
     static GameDestroyer destroyer;
     static SDL_Window* window;
-    static SDL_Surface* screenSurface;
 
     static bool init();
     static bool loadMedia();
@@ -31,6 +33,10 @@ class Game
     friend class GameDestroyer;
 
   public:
+    static SDL_Renderer* renderer;
     static void run();
     static Game& getInstance();
 };
+
+#endif // GAME_H
+
