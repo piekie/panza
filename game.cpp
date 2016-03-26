@@ -3,20 +3,13 @@
 #include "gamefwd.h"
 #include "ExtendedTexture.h"
 #include "constants.h"
+#include "Tower.h"
+#include "Scenery.h"
 
-Game* Game::instance = 0;
+Game* Game::instance = NULL;
 GameDestroyer Game::destroyer;
 SDL_Window* Game::window = NULL;
 SDL_Renderer* Game::renderer = NULL;
-
-ExtendedTexture extendedTexture;
-
-int minerAniN = 20;
-
-SDL_Rect minerAni[20];
-
-
-
 
 GameDestroyer::~GameDestroyer() {
     Game::close();
@@ -57,6 +50,9 @@ bool Game::init() {
                 success = false;
             } else {
                 SDL_SetRenderDrawColor( renderer, 0xFF, 0xFF, 0xFF, 0xFF );
+
+                Scenery::getInstance().renew(STATE_LOADING);
+
                 loadMedia();
             }
         }
@@ -75,10 +71,10 @@ void Game::run() {
     /* Run loop flag */
     bool quit = false;
     SDL_Event event;
-    int i = 0;
-    int x = 200;
-    int y = 200;
+
     while (!quit) {
+        SDL_PumpEvents();
+
         /* Handle events on queue */
         while (SDL_PollEvent( &event ) != 0) {
             if (event.type == SDL_QUIT) {
@@ -93,53 +89,17 @@ void Game::run() {
             }
             SDL_RenderClear( renderer );
 
-            if (i == 7) y -= 20;
-            if (i == 14) y -= 20;
+            Scenery &scenery = Scenery::getInstance();
+            scenery.update(STATE_LOADING);
+            scenery.render();
 
-            extendedTexture.render(renderer, x, y, &minerAni[i++]);
-
-            if (i == 20) {
-                i = 0;
-                y += 40;
-            }
             SDL_RenderPresent(renderer);
         }
-    }
-}
-
-void readMiner() {
-    for (int i = 0; i < 7; i++) {
-        minerAni[i].w = 40;
-        minerAni[i].h = 20;
-        minerAni[i].x = i * minerAni[i].w;
-        minerAni[i].y = 0;
-    }
-
-    for (int i = 7; i < 14; i++) {
-        minerAni[i].w = 40;
-        minerAni[i].h = 40;
-        minerAni[i].x = (i - 7) * minerAni[i].w;
-        minerAni[i].y = 20;
-    }
-
-    for (int i = 14; i < minerAniN; i++) {
-        minerAni[i].w = 40;
-        minerAni[i].h = 60;
-        minerAni[i].x = (i - 14) * minerAni[i].w;
-        minerAni[i].y = 80;
     }
 }
 
 bool Game::loadMedia() {
     bool success = true;
 
-    if( !extendedTexture.loadFromFile(renderer, "textures/MinerAni.bmp")) {
-        printf( "Failed to load sprite sheet texture!\n" );
-        success = false;
-    }
-    else
-    {
-        readMiner();
-    }
     return success;
 }
