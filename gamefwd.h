@@ -1,4 +1,5 @@
 #include <SDL.h>
+#include <SDL_thread.h>
 
 #ifndef GAME_H
 #define GAME_H
@@ -24,6 +25,11 @@ class Game
     static bool init();
     static bool loadMedia();
     static void close();
+
+    static int renderFunction(void* data);
+    static int inputFunction(void* data);
+
+    static bool quit;
 
   protected:
     Game() { }

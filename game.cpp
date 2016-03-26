@@ -10,6 +10,8 @@ Game* Game::instance = NULL;
 GameDestroyer Game::destroyer;
 SDL_Window* Game::window = NULL;
 SDL_Renderer* Game::renderer = NULL;
+bool Game::quit = false;
+
 
 GameDestroyer::~GameDestroyer() {
     Game::close();
@@ -68,34 +70,58 @@ void Game::close() {
 }
 
 void Game::run() {
-    /* Run loop flag */
-    bool quit = false;
+    int data = 101;
+    SDL_Thread* threadID = SDL_CreateThread(inputFunction, "Render thread", (void*) data);
+
+    while (!Game::quit) {
+        SDL_RenderClear( renderer );
+
+        Scenery &scenery = Scenery::getInstance();
+        scenery.update(STATE_LOADING);
+        scenery.render();
+
+        SDL_RenderPresent(renderer);
+    }
+
+    SDL_WaitThread( threadID, NULL );
+}
+
+int Game::inputFunction(void* data) {
+    /* Logging */
+    printf("Running input thread with = %d\n", (int) data);
+
     SDL_Event event;
 
-    while (!quit) {
-        SDL_PumpEvents();
+    /* Handle events on queue */
+    while (SDL_PollEvent( &event ) != 0) {
+        switch(event.type) {
+        case SDL_KEYDOWN:
 
-        /* Handle events on queue */
-        while (SDL_PollEvent( &event ) != 0) {
-            if (event.type == SDL_QUIT) {
-                quit = true;
-            /* User presses a key */
-            } else if (event.type == SDL_KEYDOWN) {
-                switch (event.key.keysym.sym) {
+            switch (event.key.keysym.sym) {
                 case SDLK_SPACE:
-                    quit = true;
+                    Game::quit = true;
+                    printf("quit!");
                     break;
-                }
+                default:
+                    printf("Unhandled key\n");
+                    break;
             }
-            SDL_RenderClear( renderer );
 
-            Scenery &scenery = Scenery::getInstance();
-            scenery.update(STATE_LOADING);
-            scenery.render();
+            break;
+        case SDL_QUIT:
+            quit = true;
 
-            SDL_RenderPresent(renderer);
+        default:
+            printf("Unhandled event\n");
         }
     }
+}
+
+int Game::renderFunction(void* data) {
+    /* Logging */
+    printf("Running rendering thread with = %d\n", (int) data);
+
+    return 0;
 }
 
 bool Game::loadMedia() {
