@@ -53,7 +53,7 @@ bool Game::init() {
             } else {
                 SDL_SetRenderDrawColor( renderer, 0xFF, 0xFF, 0xFF, 0xFF );
 
-                Scenery::getInstance(). renew(STATE_LOADING);
+                Scenery::getInstance().renew(STATE_LOADING);
 
                 loadMedia();
             }
@@ -73,7 +73,7 @@ void Game::run() {
     int data = 101;
     SDL_Thread* threadID = SDL_CreateThread(inputFunction, "Render thread", (void*) data);
 
-    while (!quit) {
+    while (!Game::quit) {
         SDL_RenderClear( renderer );
 
         Scenery &scenery = Scenery::getInstance();
@@ -92,20 +92,14 @@ int Game::inputFunction(void* data) {
 
     SDL_Event event;
 
-    SDL_EventState(SDL_KEYDOWN, SDL_IGNORE);
-    SDL_EventState(SDL_KEYUP, SDL_IGNORE);
-
     /* Handle events on queue */
-    while (SDL_WaitEvent( &event )) {
-        printf("ss");
-
+    while (SDL_PollEvent( &event ) != 0) {
         switch(event.type) {
         case SDL_KEYDOWN:
 
             switch (event.key.keysym.sym) {
-                printf("ss");ÿ
                 case SDLK_SPACE:
-                    quit = true;
+                    Game::quit = true;
                     printf("quit!");
                     break;
                 default:
@@ -116,14 +110,11 @@ int Game::inputFunction(void* data) {
             break;
         case SDL_QUIT:
             quit = true;
-            break;
+
         default:
             printf("Unhandled event\n");
-            break;
         }
     }
-
-    printf("SDL_WaitEvent error: %s\n", SDL_GetError());
 }
 
 int Game::renderFunction(void* data) {
