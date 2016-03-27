@@ -87,14 +87,14 @@ void Game::run() {
                     break;
                 }
             }
-            SDL_RenderClear( renderer );
-
-            Scenery &scenery = Scenery::getInstance();
-            scenery.update(STATE_LOADING);
-            scenery.render();
-
-            SDL_RenderPresent(renderer);
         }
+        SDL_RenderClear( renderer );
+
+        Scenery &scenery = Scenery::getInstance();
+        scenery.update(STATE_LOADING);
+        scenery.render();
+
+        SDL_RenderPresent(renderer);
     }
 }
 
