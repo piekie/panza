@@ -5,13 +5,13 @@
 
 class Log {
 private:
-    Log* instance;
-    void initialize();
+    static Log* instance;
+    static void initialize();
 protected:
-    ofstream fout;
+    static std::ofstream fout;
 public:
     ~Log();
-    static void i(string flag, string message);
+    static void i(std::string flag, std::string message);
     static Log& getInstance();
 };
 
