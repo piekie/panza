@@ -1,10 +1,12 @@
+#ifndef EXTENDED_TEXTURE_H
+#define EXTENDED_TEXTURE_H
+
 #include <SDL.h>
+#include <SDL_ttf.h>
+
 #include <iostream>
 
 #include "gamefwd.h"
-
-#ifndef EXTENDED_TEXTURE_H
-#define EXTENDED_TEXTURE_H
 
 class ExtendedTexture {
 public:
@@ -12,10 +14,11 @@ public:
     ~ExtendedTexture();
 
     bool loadFromFile(SDL_Renderer*, std::string path);
+    bool loadFromRenderedText(TTF_Font *gFont, std::string textureText, SDL_Color textColor );
 
     void free();
 
-    void render(SDL_Renderer*, int x, int y, SDL_Rect* clip = NULL);
+    void render(int x, int y, SDL_Rect* clip = NULL);
 
     int getWidth();
     int getHeight();

@@ -1,5 +1,8 @@
 #include "ExtendedTexture.h"
 
+#include "constants.h"
+#include "Log.h"
+
 #include <stdio.h>
 
 ExtendedTexture::ExtendedTexture() {
@@ -41,6 +44,41 @@ bool ExtendedTexture::loadFromFile(SDL_Renderer *renderer, std::string path) {
     return mTexture != NULL;
 }
 
+bool ExtendedTexture::loadFromRenderedText(TTF_Font *gFont, std::string textureText, SDL_Color textColor ) {
+    SDL_Renderer* renderer = Game::getInstance().renderer;
+
+    bool success = true;
+    //Get rid of preexisting texture
+    free();
+
+    //Render text surface
+    SDL_Surface* textSurface = TTF_RenderText_Solid( gFont, textureText.c_str(), textColor );
+    if( textSurface == NULL ) {
+        Log::getInstance().i(FLAG_RENDERING, TTF_GetError());
+        success = false;
+    }
+    else
+    {
+        //Create texture from surface pixels
+        mTexture = SDL_CreateTextureFromSurface( renderer, textSurface );
+        if( mTexture == NULL )
+        {
+            Log::getInstance().i(FLAG_RENDERING, SDL_GetError());
+            success = false;
+        }
+        else
+        {
+            //Get image dimensions
+            mWidth = textSurface->w;
+            mHeight = textSurface->h;
+        }
+
+        //Get rid of old surface
+        SDL_FreeSurface( textSurface );
+    }
+    return mTexture != NULL;
+}
+
 void ExtendedTexture::free() {
     if (mTexture != NULL) {
         SDL_DestroyTexture(mTexture);
@@ -51,7 +89,9 @@ void ExtendedTexture::free() {
     }
 }
 
-void ExtendedTexture::render(SDL_Renderer *renderer, int x, int y, SDL_Rect* clip) {
+void ExtendedTexture::render(int x, int y, SDL_Rect* clip) {
+    SDL_Renderer* renderer = Game::getInstance().renderer;
+
     SDL_Rect renderQuad = { x, y, mWidth, mHeight };
     //Set clip rendering dimensions
     if( clip != NULL )

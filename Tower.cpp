@@ -55,9 +55,8 @@ void Tower::update(){
 }
 
 void Tower::render() {
-    SDL_Renderer *renderer = Game::getInstance().renderer;
     Scenery &scenery = Scenery::getInstance();
 
 
-    scenery.textures[TCODE_TOWER].render(renderer, x, y, &scenery.tRects[TCODE_TOWER][currentFrame]);
+    scenery.textures[TCODE_TOWER].render(x, y, &scenery.tRects[TCODE_TOWER][currentFrame]);
 }

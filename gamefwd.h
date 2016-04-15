@@ -21,6 +21,8 @@ class Game
     static GameDestroyer destroyer;
     static SDL_Window* window;
 
+    static bool quit;
+
     static bool init();
     static bool loadMedia();
     static void close();
@@ -36,6 +38,7 @@ class Game
     static SDL_Renderer* renderer;
     static void run();
     static Game& getInstance();
+    static void exit();
 };
 
 #endif // GAME_H
